@@ -3,6 +3,8 @@ import * as XLSX from 'xlsx';
 import axios from 'axios';
 import AWS from 'aws-sdk';
 import { Box, Button } from '@mui/material';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const UploadToS3 = () => {
   const [file, setFile] = useState(null);
@@ -25,6 +27,7 @@ const UploadToS3 = () => {
     if (!file) return;
 
     setUploading(true);
+    toast.info('Upload in progress...');
 
     try {
       const reader = new FileReader();
@@ -68,10 +71,12 @@ const UploadToS3 = () => {
         XLSX.writeFile(newWorkbook, 'updated_excel_file.xlsx');
 
         localStorage.removeItem('uploadProgress');
+        toast.success('Upload completed successfully!');
       };
       reader.readAsArrayBuffer(file);
     } catch (error) {
       console.error('Error uploading file:', error);
+      toast.error('Error uploading file.');
     } finally {
       setUploading(false);
     }
@@ -83,7 +88,7 @@ const UploadToS3 = () => {
       <Button variant="contained" color="primary" onClick={handleUpload} disabled={uploading}>
         Submit
       </Button>
-      
+      <ToastContainer />
     </Box>
   );
 };
